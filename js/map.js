@@ -30,14 +30,28 @@ const MapModule = (() => {
     _config = config;
     _features = features;
 
+    const fitFeatures = config.backgroundFeatures || features;
     const projection = _proj(config.projection).fitExtent(
       [[PADDING, PADDING], [width - PADDING, height - PADDING]],
-      { type: 'FeatureCollection', features }
+      { type: 'FeatureCollection', features: fitFeatures }
     );
     _pathGen = d3.geoPath(projection);
 
     _svg.selectAll('*').remove();
     _g = _svg.append('g');
+
+    if (config.backgroundFeatures) {
+      _g.selectAll('.world-bg')
+        .data(config.backgroundFeatures)
+        .enter().append('path')
+        .attr('class', 'world-bg')
+        .attr('d', d => _pathGen(d))
+        .attr('fill', 'var(--county-default)')
+        .attr('stroke', 'var(--county-default-stroke)')
+        .attr('stroke-width', 1)
+        .attr('stroke-linejoin', 'round')
+        .style('pointer-events', 'none');
+    }
 
     _g.selectAll('.county-path')
       .data(features, d => config.getId(d))
@@ -54,7 +68,7 @@ const MapModule = (() => {
       .on('zoom', evt => {
         const t = evt.transform;
         _g.attr('transform', t);
-        _g.selectAll('.county-path').attr('stroke-width', 1 / t.k);
+        _g.selectAll('.county-path, .world-bg').attr('stroke-width', 1 / t.k);
         const ind = svgEl.parentElement && svgEl.parentElement.querySelector('.scale-indicator');
         if (ind) ind.textContent = t.k.toFixed(1) + '×';
       });

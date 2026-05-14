@@ -3,6 +3,8 @@ const COUNTRY_NAMES = {
   '156': '中國', '392': '日本', '410': '韓國', '356': '印度', '764': '泰國',
   '704': '越南', '360': '印尼', '608': '菲律賓', '458': '馬來西亞',
   '682': '沙烏地阿拉伯', '792': '土耳其', '364': '伊朗', '376': '以色列',
+  // 中亞
+  '398': '哈薩克', '860': '烏茲別克',
   // 歐洲
   '826': '英國', '250': '法國', '276': '德國', '380': '義大利',
   '724': '西班牙', '620': '葡萄牙', '528': '荷蘭', '616': '波蘭',
@@ -23,6 +25,7 @@ const WORLD_MAP_CONFIG = {
   topoUrl: 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json',
   processFeatures(topo) {
     const fc = topojson.feature(topo, topo.objects.countries);
+    this.backgroundFeatures = fc.features;
     return fc.features
       .filter(f => {
         const id = String(f.id);
@@ -34,6 +37,12 @@ const WORLD_MAP_CONFIG = {
         f.properties = f.properties || {};
         f.properties.cnName = COUNTRY_NAMES[key];
         f.properties._id = id;
+        if (f.geometry && f.geometry.type === 'MultiPolygon') {
+          const largest = f.geometry.coordinates.reduce((a, b) =>
+            b.reduce((s, r) => s + r.length, 0) > a.reduce((s, r) => s + r.length, 0) ? b : a
+          );
+          f.geometry = { type: 'Polygon', coordinates: largest };
+        }
         return f;
       });
   },
