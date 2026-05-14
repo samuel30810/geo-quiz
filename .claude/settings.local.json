@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"C:\\\\Users\\\\user\\\\Desktop\\\\實驗\\\\地圖練習工具\\\\css\" \"C:\\\\Users\\\\user\\\\Desktop\\\\實驗\\\\地圖練習工具\\\\js\" \"C:\\\\Users\\\\user\\\\Desktop\\\\實驗\\\\地圖練習工具\\\\.github\\\\workflows\")"
+    ]
+  }
+}

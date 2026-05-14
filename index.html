@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>地圖練習工具</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="home-wrapper">
+    <header class="home-header">
+      <div class="home-score" id="home-score" style="visibility:hidden">
+        答對 <strong>0</strong> / 0
+      </div>
+    </header>
+
+    <div class="home-content">
+      <div class="pill-chip">
+        <span class="pill-chip-dot"></span>
+        地圖練習工具
+      </div>
+      <h1 class="home-title">看著地圖<br>認識每一個地方</h1>
+      <p class="home-desc">地圖會放大一個地方，從四個選項裡選出正確的名字。</p>
+
+      <div class="mode-cards">
+        <a href="quiz.html?map=taiwan" class="mode-card">
+          <div class="card-map-preview" id="preview-taiwan"></div>
+          <div class="card-info">
+            <div class="card-title-row">
+              <span class="card-title">台灣縣市</span>
+              <span class="card-count">22 題</span>
+            </div>
+            <div class="card-sub">練習認識本島與外島</div>
+            <div class="card-cta">開始練習 <span>→</span></div>
+          </div>
+        </a>
+
+        <a href="quiz.html?map=world" class="mode-card">
+          <div class="card-map-preview" id="preview-world"></div>
+          <div class="card-info">
+            <div class="card-title-row">
+              <span class="card-title">世界國家</span>
+              <span class="card-count">50 題</span>
+            </div>
+            <div class="card-sub">五大洲的代表國家</div>
+            <div class="card-cta">開始練習 <span>→</span></div>
+          </div>
+        </a>
+      </div>
+
+      <div class="home-attribution">taiwan-atlas · Natural Earth</div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+  <script src="js/data-taiwan.js"></script>
+  <script src="js/data-world.js"></script>
+  <script>
+    (async function () {
+      function renderPreview(containerId, features, projType, internalW, internalH) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        const W = 96, H = 96;
+        const proj = (projType === 'naturalEarth' ? d3.geoNaturalEarth1() : d3.geoMercator())
+          .fitExtent([[2, 2], [internalW - 2, internalH - 2]], { type: 'FeatureCollection', features });
+        const pathGen = d3.geoPath(proj);
+        const svg = d3.select(container).append('svg')
+          .attr('width', W).attr('height', H)
+          .attr('viewBox', '0 0 ' + internalW + ' ' + internalH)
+          .attr('preserveAspectRatio', 'xMidYMid meet');
+        svg.selectAll('path').data(features).enter().append('path')
+          .attr('d', d => pathGen(d))
+          .attr('fill', '#cfe9dc')
+          .attr('stroke', '#fff')
+          .attr('stroke-width', 0.6)
+          .attr('stroke-linejoin', 'round');
+      }
+
+      try {
+        const [twTopo, wTopo] = await Promise.all([
+          fetch(TAIWAN_MAP_CONFIG.topoUrl).then(r => r.json()),
+          fetch(WORLD_MAP_CONFIG.topoUrl).then(r => r.json()),
+        ]);
+        const twFeatures = TAIWAN_MAP_CONFIG.processFeatures(twTopo);
+        const wFeatures  = WORLD_MAP_CONFIG.processFeatures(wTopo);
+        renderPreview('preview-taiwan', twFeatures, TAIWAN_MAP_CONFIG.projection,
+          TAIWAN_MAP_CONFIG.previewInternalW, TAIWAN_MAP_CONFIG.previewInternalH);
+        renderPreview('preview-world', wFeatures, WORLD_MAP_CONFIG.projection,
+          WORLD_MAP_CONFIG.previewInternalW, WORLD_MAP_CONFIG.previewInternalH);
+      } catch (e) {
+        // Previews fail silently — cards remain clickable with ocean placeholder
+      }
+    })();
+  </script>
+</body>
+</html>
