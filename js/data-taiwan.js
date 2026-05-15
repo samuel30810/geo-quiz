@@ -1,3 +1,39 @@
+/* ── data-taiwan.js ───────────────────────────────────
+ * 職責：宣告台灣縣市英文名稱對照表與地圖設定物件，含離島切割邏輯
+ * 函式：processFeatures(), getName(), getId(), getEnName()
+ * 依賴：topojson-client（將 TopoJSON 解析為 GeoJSON features）
+ * ──────────────────────────────────────────────────── */
+
+const TAIWAN_EN_NAMES = {
+  '台北市': 'Taipei City',
+  '新北市': 'New Taipei City',
+  '桃園市': 'Taoyuan City',
+  '台中市': 'Taichung City',
+  '台南市': 'Tainan City',
+  '高雄市': 'Kaohsiung City',
+  '基隆市': 'Keelung City',
+  '新竹市': 'Hsinchu City',
+  '嘉義市': 'Chiayi City',
+  '新竹縣': 'Hsinchu County',
+  '苗栗縣': 'Miaoli County',
+  '彰化縣': 'Changhua County',
+  '南投縣': 'Nantou County',
+  '雲林縣': 'Yunlin County',
+  '嘉義縣': 'Chiayi County',
+  '屏東縣': 'Pingtung County',
+  '宜蘭縣': 'Yilan County',
+  '花蓮縣': 'Hualien County',
+  '台東縣': 'Taitung County',
+  '澎湖縣': 'Penghu County',
+  '金門縣': 'Kinmen County',
+  '連江縣': 'Lienchiang County',
+  '蘭嶼':   'Orchid Island',
+  '綠島':   'Green Island',
+  '小琉球': 'Little Liuqiu',
+  '龜山島': 'Guishan Island',
+  '基隆嶼': 'Keelung Islet',
+};
+
 const TAIWAN_MAP_CONFIG = {
   topoUrl: 'https://cdn.jsdelivr.net/npm/taiwan-atlas@2021.9.20/counties-10t.json',
 
@@ -58,8 +94,10 @@ const TAIWAN_MAP_CONFIG = {
 
   getName(feature) { return feature.properties.COUNTYNAME; },
   getId(feature)   { return feature.properties.COUNTYID; },
+  getEnName(feature) { return TAIWAN_EN_NAMES[this.getName(feature)] || ''; },
   mapKind: 'taiwan',
   questionText: '這是哪個縣市／離島？',
+  questionTextEn: 'Which county / city is this?',
   mapContainerHeight: 340,
   previewInternalW: 140,
   previewInternalH: 160,

@@ -1,3 +1,9 @@
+/* ── engine.js ────────────────────────────────────────
+ * 職責：負責測驗流程控制，包含題庫建立、選項產生、答題判斷、分數計算與結果畫面渲染
+ * 函式：（IIFE，無對外 export；內部關鍵函式：buildQueue, nextQ, onAnswer, showResult, retry）
+ * 依賴：data-taiwan.js / data-world.js（地圖設定與題庫資料）、map.js（MapModule，地圖渲染與互動）
+ * ──────────────────────────────────────────────────── */
+
 (async function () {
   var params = new URLSearchParams(location.search);
   var mapKind = params.get('map') || 'taiwan';
@@ -50,6 +56,7 @@
   var resultTopbarScore = document.getElementById('result-topbar-score');
 
   document.getElementById('question-text').textContent = config.questionText;
+  document.getElementById('question-text-en').textContent = config.questionTextEn || '';
   document.getElementById('back-btn').addEventListener('click', function () { location.href = 'index.html'; });
   nextBtn.addEventListener('click', onNextClick);
   btnRetry.addEventListener('click', retry);
@@ -183,10 +190,13 @@
   }
 
   function buildChoices(target) {
-    var name = config.getName(target);
-    var others = features.map(function (f) { return config.getName(f); }).filter(function (n) { return n !== name; });
+    var targetCn = config.getName(target);
+    var targetEn = config.getEnName(target);
+    var others = features
+      .filter(function (f) { return config.getName(f) !== targetCn; })
+      .map(function (f) { return { cn: config.getName(f), en: config.getEnName(f) }; });
     shuffle(others);
-    var arr = [name].concat(others.slice(0, 3));
+    var arr = [{ cn: targetCn, en: targetEn }].concat(others.slice(0, 3));
     shuffle(arr);
     return arr;
   }
@@ -201,12 +211,21 @@
 
   function renderChoices(choices) {
     choicesEl.innerHTML = '';
-    choices.forEach(function (name) {
+    choices.forEach(function (pair) {
       var btn = document.createElement('button');
       btn.className = 'choice-btn';
-      btn.textContent = name;
-      btn.dataset.name = name;
-      btn.addEventListener('click', function () { onAnswer(name); });
+      btn.dataset.name = pair.cn;
+      var cnSpan = document.createElement('span');
+      cnSpan.className = 'choice-cn';
+      cnSpan.textContent = pair.cn;
+      btn.appendChild(cnSpan);
+      if (pair.en) {
+        var enSpan = document.createElement('span');
+        enSpan.className = 'choice-en';
+        enSpan.textContent = pair.en;
+        btn.appendChild(enSpan);
+      }
+      btn.addEventListener('click', function () { onAnswer(pair.cn); });
       choicesEl.appendChild(btn);
     });
   }
@@ -218,10 +237,11 @@
     var correctName = config.getName(current);
     var isCorrect = chosen === correctName;
 
+    var enName = config.getEnName(current);
     if (isCorrect) {
       score++;
       MapModule.markCorrect(current);
-      showFeedback('correct', correctName);
+      showFeedback('correct', correctName, enName);
     } else {
       var chosenFeat = features.find(function (f) { return config.getName(f) === chosen; }) || null;
       if (chosenFeat) {
@@ -229,7 +249,7 @@
         MapModule.markWrong(chosenFeat);
       }
       MapModule.markCorrect(current);
-      showFeedback('wrong', correctName);
+      showFeedback('wrong', correctName, enName);
     }
 
     choicesEl.querySelectorAll('.choice-btn').forEach(function (btn) {
@@ -248,7 +268,7 @@
     nextBtn.style.display = 'block';
   }
 
-  function showFeedback(feedbackMode, name) {
+  function showFeedback(feedbackMode, cnName, enName) {
     var isGood = feedbackMode === 'correct';
     feedbackEl.className = 'feedback-area ' + feedbackMode;
     feedbackEl.innerHTML = '';
@@ -262,7 +282,7 @@
 
     var prefix = document.createTextNode(isGood ? '答對了！這是「' : '正確答案是「');
     var strong = document.createElement('strong');
-    strong.textContent = name;
+    strong.textContent = enName ? cnName + ' (' + enName + ')' : cnName;
     var suffix = document.createTextNode('」');
 
     textSpan.appendChild(prefix);

@@ -45,3 +45,6 @@
 | 離島拆分方式 | 在 `processFeatures` 內依硬寫的座標 bounding box 從母縣市 MultiPolygon 拆出離島 polygon | 不引入額外資料源、不改 TopoJSON，邏輯集中在資料設定檔內；同一離島的多個 polygon 合併為 MultiPolygon | 2026-05-15 |
 | 模式切換方式 | 首頁 DOM 切換（Step 1 模式選擇 → Step 2 地圖選擇），不另開頁面 | 減少頁面跳轉，體驗更流暢；模式與地圖透過 URL 參數 `mode` + `map` 傳遞給 quiz.html | 2026-05-15 |
 | 群島國家 MultiPolygon 保留 | `processFeatures` 對印尼、菲律賓、日本、馬來西亞、紐西蘭跳過 MultiPolygon → Polygon 裁切 | 這些國家的多個 polygon 構成本體形狀（群島），裁切會導致只剩單一島嶼無法辨識；其他有海外領土的國家（法國、美國等）仍裁切以確保 zoom 聚焦本土 | 2026-05-15 |
+| 雙語顯示方式 | 問題副標 + 選項按鈕雙行 + Feedback 中英格式 | 雙語教學需求，學生可對照學習；MAP_CONFIG 介面擴充 `questionTextEn` 與 `getEnName()` | 2026-05-15 |
+| 小國渲染風險保留 | 新加坡、巴林（高風險）、牙買加、賽普勒斯（中風險）照常加入白名單 | 使用者知情確認，優先完整性；渲染失敗僅影響單一題目視覺，不崩潰 | 2026-05-15 |
+| 民主剛果中文名稱 | `'剛果民主共和國'` → `'民主剛果'` | 對齊使用者提供之新國家名單（非版面考量），同時將英文名更新為 `'Democratic Republic of the Congo'` | 2026-05-15 |
