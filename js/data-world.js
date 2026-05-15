@@ -37,7 +37,8 @@ const WORLD_MAP_CONFIG = {
         f.properties = f.properties || {};
         f.properties.cnName = COUNTRY_NAMES[key];
         f.properties._id = id;
-        if (f.geometry && f.geometry.type === 'MultiPolygon') {
+        const keepMulti = new Set(['360', '608', '392', '458', '554']);
+        if (f.geometry && f.geometry.type === 'MultiPolygon' && !keepMulti.has(key)) {
           const largest = f.geometry.coordinates.reduce((a, b) =>
             b.reduce((s, r) => s + r.length, 0) > a.reduce((s, r) => s + r.length, 0) ? b : a
           );

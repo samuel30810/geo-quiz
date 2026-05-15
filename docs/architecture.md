@@ -15,7 +15,7 @@
 | 題目引擎 | 出題、計分、回饋顯示，與地圖渲染解耦 | `js/engine.js` | 消費 MAP_CONFIG 介面 |
 | 地圖模組 | SVG 地圖渲染、D3 zoom、path 樣式管理 | `js/map.js` | 資料無關，只處理視覺 |
 | 台灣資料設定 | 台灣縣市 TopoJSON URL、屬性欄位、名稱取得方式、離島拆分邏輯 | `js/data-taiwan.js` | 實作 MAP_CONFIG 介面；`processFeatures` 依座標範圍從母縣市 MultiPolygon 拆出 5 座離島（蘭嶼、綠島、小琉球、龜山島、基隆嶼）為獨立 feature |
-| 世界資料設定 | 世界國家 TopoJSON URL、ISO 名稱對照表、國家白名單 | `js/data-world.js` | 實作 MAP_CONFIG 介面 |
+| 世界資料設定 | 世界國家 TopoJSON URL、ISO 名稱對照表、國家白名單 | `js/data-world.js` | 實作 MAP_CONFIG 介面；`processFeatures` 將海外領土國家的 MultiPolygon 裁切為最大 Polygon，但群島國家（印尼、菲律賓、日本、馬來西亞、紐西蘭）保留完整 MultiPolygon |
 | 樣式 | 全域 CSS、RWD 斷點、地圖 path 狀態色 | `css/style.css` | |
 | CI/CD | push to main 後自動部署至 GitHub Pages | `.github/workflows/` | 使用 actions/deploy-pages |
 
@@ -44,3 +44,4 @@
 | 部署平台 | GitHub Pages | 與 git 工作流自然整合，工程師維護成本低 | 2026-05-14 |
 | 離島拆分方式 | 在 `processFeatures` 內依硬寫的座標 bounding box 從母縣市 MultiPolygon 拆出離島 polygon | 不引入額外資料源、不改 TopoJSON，邏輯集中在資料設定檔內；同一離島的多個 polygon 合併為 MultiPolygon | 2026-05-15 |
 | 模式切換方式 | 首頁 DOM 切換（Step 1 模式選擇 → Step 2 地圖選擇），不另開頁面 | 減少頁面跳轉，體驗更流暢；模式與地圖透過 URL 參數 `mode` + `map` 傳遞給 quiz.html | 2026-05-15 |
+| 群島國家 MultiPolygon 保留 | `processFeatures` 對印尼、菲律賓、日本、馬來西亞、紐西蘭跳過 MultiPolygon → Polygon 裁切 | 這些國家的多個 polygon 構成本體形狀（群島），裁切會導致只剩單一島嶼無法辨識；其他有海外領土的國家（法國、美國等）仍裁切以確保 zoom 聚焦本土 | 2026-05-15 |
