@@ -115,10 +115,228 @@ strong  { font-weight: 700; }
   font-size: 14px;
   line-height: 1.55;
   color: var(--ink-dim);
-  margin-bottom: 22px;
+  margin-bottom: 8px;
 }
 
-/* Mode cards */
+/* ===== Step indicator ===== */
+.step-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--ink-dim);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 6px;
+  margin-bottom: 18px;
+}
+
+.step-num {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.step-num--active {
+  background: var(--primary);
+  color: #fff;
+}
+.step-num--dim {
+  background: transparent;
+  color: var(--ink-dim);
+  opacity: 0.6;
+}
+.step-num--done {
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+}
+
+.step-label--active { color: var(--primary-dark); }
+.step-label--dim { color: var(--ink-dim); opacity: 0.6; }
+
+.step-line {
+  width: 14px;
+  height: 1px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+/* ===== Step transition ===== */
+.home-step {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.home-step--enter {
+  animation: stepFadeIn 0.2s ease forwards;
+}
+@keyframes stepFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Mode select cards (Step 1) ===== */
+.mode-select-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 0;
+}
+
+.mode-select-card {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 14px;
+  text-align: left;
+  color: var(--ink);
+  display: flex;
+  flex-direction: row;
+  gap: 14px;
+  align-items: center;
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+.mode-select-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 16px rgba(29, 158, 117, 0.12);
+  transform: translateY(-1px);
+}
+
+.mode-glyph {
+  width: 56px;
+  height: 56px;
+  background: var(--primary-soft);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mode-select-info { flex: 1; min-width: 0; }
+
+.mode-select-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+.mode-select-title {
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.mode-tag {
+  font-size: 10px;
+  color: var(--primary-dark);
+  background: var(--primary-soft);
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.mode-select-sub {
+  font-size: 13px;
+  color: var(--ink-dim);
+  line-height: 1.4;
+}
+
+.mode-select-arrow {
+  color: var(--primary-dark);
+  font-size: 18px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ===== Home hint box ===== */
+.home-hint {
+  margin-top: 22px;
+  padding: 10px 14px;
+  background: rgba(31, 43, 37, 0.025);
+  border-radius: 12px;
+  font-size: 12px;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  text-align: left;
+}
+.home-hint-title {
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+.hint-em {
+  color: var(--primary-dark);
+}
+
+/* ===== Step 2 topbar ===== */
+.step2-topbar {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+}
+
+.back-to-mode {
+  background: transparent;
+  border: none;
+  color: var(--ink-dim);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: background 0.12s;
+}
+.back-to-mode:hover { background: rgba(31, 43, 37, 0.06); }
+
+.step2-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+
+.badge-glyph {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: var(--primary-soft);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.badge-glyph--practice::after {
+  content: '';
+  width: 10px;
+  height: 8px;
+  background: linear-gradient(var(--primary) 0 33%, transparent 33% 40%, var(--primary) 40% 73%, transparent 73% 80%, var(--primary-dark) 80% 100%);
+  opacity: 0.7;
+  border-radius: 1px;
+}
+.badge-glyph--random::after {
+  content: '×';
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--primary-dark);
+  line-height: 1;
+}
+
+.step2-title {
+  font-size: 26px;
+}
+
+/* Mode cards (Step 2 map selection) */
 .mode-cards {
   display: flex;
   flex-direction: column;
@@ -169,7 +387,15 @@ strong  { font-weight: 700; }
   margin-bottom: 2px;
 }
 .card-title { font-size: 18px; font-weight: 800; }
-.card-count  { font-size: 12px; color: var(--ink-dim); }
+
+.card-count-pill {
+  font-size: 11px;
+  color: var(--primary-dark);
+  background: var(--primary-soft);
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+}
 
 .card-sub {
   font-size: 13px;
@@ -194,6 +420,11 @@ strong  { font-weight: 700; }
   text-align: center;
 }
 
+/* ===== Desktop nav (hidden on mobile) ===== */
+.desktop-nav {
+  display: none;
+}
+
 /* ===== QUIZ PAGE ===== */
 .topbar {
   height: 44px;
@@ -206,6 +437,9 @@ strong  { font-weight: 700; }
   position: sticky;
   top: 0;
   z-index: 10;
+}
+.topbar--result {
+  position: static;
 }
 
 .back-btn {
@@ -232,6 +466,7 @@ strong  { font-weight: 700; }
 .score-display strong {
   color: var(--primary-dark);
   font-size: 15px;
+  font-weight: 700;
 }
 
 .quiz-main {
@@ -415,10 +650,262 @@ strong  { font-weight: 700; }
   box-shadow: 0 6px 16px rgba(29, 158, 117, 0.36);
 }
 
+/* ===== RESULT SCREEN ===== */
+.result-screen {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.result-body {
+  flex: 1;
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px 22px 22px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.result-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: center;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  margin-bottom: 24px;
+}
+.result-chip-glyph {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background: var(--primary-soft);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.result-chip-glyph--practice {
+  background: var(--primary-soft);
+}
+.result-chip-glyph--practice::after {
+  content: '';
+  width: 8px;
+  height: 6px;
+  background: linear-gradient(var(--primary) 0 33%, transparent 33% 40%, var(--primary) 40% 73%, transparent 73% 80%, var(--primary-dark) 80% 100%);
+  opacity: 0.7;
+  border-radius: 1px;
+}
+.result-chip-glyph--random {
+  background: var(--primary-soft);
+}
+.result-chip-glyph--random::after {
+  content: '×';
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--primary-dark);
+  line-height: 1;
+}
+
+.result-headline {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.result-sub {
+  color: var(--ink-dim);
+  font-size: 14px;
+  margin-top: 8px;
+  margin-bottom: 28px;
+}
+
+/* Practice ring */
+.result-ring-area {
+  align-self: center;
+  margin-bottom: 22px;
+}
+.result-ring-wrap {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+.result-ring-svg { display: block; }
+.result-ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.result-ring-pct {
+  font-size: 56px;
+  font-weight: 900;
+  color: var(--ink);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.result-ring-pct-sign {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ink-dim);
+  margin-left: 2px;
+}
+.result-ring-detail {
+  margin-top: 6px;
+  font-size: 14px;
+  color: var(--ink-dim);
+  font-weight: 600;
+}
+.result-ring-correct-num {
+  color: var(--primary-dark);
+  font-weight: 800;
+}
+
+/* Random score */
+.result-score-area {
+  align-self: center;
+  margin-bottom: 22px;
+}
+.result-score-label {
+  font-size: 12px;
+  color: var(--ink-dim);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.result-score-big {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+  line-height: 1;
+}
+.result-score-num {
+  font-size: 110px;
+  font-weight: 900;
+  color: var(--primary);
+  letter-spacing: -0.05em;
+}
+.result-score-unit {
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--ink-dim);
+  letter-spacing: -0.02em;
+}
+.result-score-sub {
+  font-size: 13px;
+  color: var(--ink-dim);
+  margin-top: 6px;
+}
+
+/* Progress bar */
+.result-bar-wrap {
+  padding: 0 4px;
+  margin-top: 16px;
+  margin-bottom: 18px;
+}
+.result-bar-track {
+  height: 10px;
+  background: var(--ocean);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  position: relative;
+}
+.result-bar-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--primary);
+  border-radius: var(--radius-pill);
+  transition: width 0.4s ease;
+}
+.result-bar-ticks {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+
+/* Breakdown */
+.result-breakdown {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 22px;
+}
+.result-breakdown-col { text-align: center; }
+.result-breakdown-label {
+  font-size: 11px;
+  color: var(--ink-dim);
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.result-breakdown-val {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-top: 2px;
+}
+.result-breakdown-val--good { color: var(--primary-dark); }
+.result-breakdown-val--bad  { color: #d44141; }
+.result-breakdown-divider {
+  width: 1px;
+  background: var(--border);
+}
+
+/* Result CTA */
+.result-cta {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.result-btn-primary {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  box-shadow: var(--shadow-button);
+  transition: background 0.15s;
+}
+.result-btn-primary:hover { background: var(--primary-dark); }
+.result-btn-secondary {
+  background: transparent;
+  color: var(--ink-dim);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.12s;
+}
+.result-btn-secondary:hover { background: rgba(31, 43, 37, 0.04); }
+
 /* ===== RWD ===== */
 @media (min-width: 480px) {
   .home-wrapper { padding: 0 20px 48px; }
   .quiz-main    { padding: 16px 20px 40px; }
+  .result-body  { padding: 28px 28px 28px; }
 }
 
 @media (min-width: 768px) {
@@ -427,10 +914,94 @@ strong  { font-weight: 700; }
   .question-text { font-size: 26px; }
   .home-title   { font-size: 36px; }
   .quiz-main, .home-wrapper { max-width: 640px; }
+  .result-body { max-width: 640px; }
+
+  /* Desktop nav */
+  .desktop-nav {
+    display: flex;
+    height: 56px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--card);
+  }
+  .desktop-nav-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .desktop-nav-logo .pill-chip-dot {
+    width: 7px;
+    height: 7px;
+  }
+
+  /* Step 1 mode cards: side by side */
+  .mode-select-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .mode-select-card {
+    flex-direction: column;
+    gap: 14px;
+    padding: 22px;
+    border-radius: 22px;
+    text-align: left;
+  }
+  .mode-glyph {
+    width: 64px;
+    height: 64px;
+  }
+  .mode-select-title {
+    font-size: 24px;
+  }
+  .mode-select-sub {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .mode-select-card .mode-select-arrow {
+    display: none;
+  }
+  .mode-select-card::after {
+    content: '選擇此模式 →';
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: auto;
+    color: var(--primary-dark);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  /* Hide pill chip on Step 1 desktop (desktop-nav has the logo) */
+  .home-header { display: none; }
+
+  /* Step indicator sizes */
+  .step-indicator {
+    gap: 10px;
+    font-size: 12px;
+    margin-top: 12px;
+    margin-bottom: 28px;
+  }
+  .step-num {
+    width: 22px;
+    height: 22px;
+    font-size: 12px;
+  }
+  .step-line {
+    width: 20px;
+  }
 }
 
 @media (min-width: 1024px) {
   .home-title   { font-size: 44px; }
   .question-text { font-size: 30px; }
   .quiz-main, .home-wrapper { max-width: 720px; padding-left: 28px; padding-right: 28px; }
+  .result-body { max-width: 720px; }
 }

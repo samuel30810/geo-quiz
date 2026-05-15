@@ -10,48 +10,136 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
+  <!-- Desktop nav (>= 768px) -->
+  <nav class="desktop-nav">
+    <span class="desktop-nav-logo">
+      <span class="pill-chip-dot"></span>
+      地圖練習工具
+    </span>
+  </nav>
+
   <div class="home-wrapper">
-    <header class="home-header">
-      <div class="home-score" id="home-score" style="visibility:hidden">
-        答對 <strong>0</strong> / 0
-      </div>
-    </header>
+    <!-- Step 1: 選擇模式 -->
+    <div id="step-mode" class="home-step">
+      <header class="home-header">
+        <div class="home-score" style="visibility:hidden">
+          答對 <strong>0</strong> / 0
+        </div>
+      </header>
 
-    <div class="home-content">
-      <div class="pill-chip">
-        <span class="pill-chip-dot"></span>
-        地圖練習工具
-      </div>
-      <h1 class="home-title">看著地圖<br>認識每一個地方</h1>
-      <p class="home-desc">地圖會放大一個地方，從四個選項裡選出正確的名字。</p>
+      <div class="home-content">
+        <div class="pill-chip">
+          <span class="pill-chip-dot"></span>
+          地圖練習工具
+        </div>
+        <h1 class="home-title">看著地圖<br>認識每一個地方</h1>
+        <p class="home-desc">選擇一種練習方式開始。</p>
 
-      <div class="mode-cards">
-        <a href="quiz.html?map=taiwan" class="mode-card">
-          <div class="card-map-preview" id="preview-taiwan"></div>
-          <div class="card-info">
-            <div class="card-title-row">
-              <span class="card-title">台灣縣市</span>
-              <span class="card-count">22 題</span>
+        <div class="step-indicator">
+          <span class="step-num step-num--active">1</span>
+          <span class="step-label step-label--active">選擇模式</span>
+          <span class="step-line"></span>
+          <span class="step-num step-num--dim">2</span>
+          <span class="step-label step-label--dim">選擇地圖</span>
+        </div>
+
+        <div class="mode-select-cards">
+          <button class="mode-select-card" data-mode="practice">
+            <div class="mode-glyph">
+              <svg width="31" height="31" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="5" width="6" height="3" rx="1.5" fill="#1D9E75" />
+                <rect x="11" y="5.5" width="10" height="2" rx="1" fill="#1D9E75" opacity="0.35" />
+                <rect x="3" y="11" width="6" height="3" rx="1.5" fill="#1D9E75" />
+                <rect x="11" y="11.5" width="10" height="2" rx="1" fill="#1D9E75" opacity="0.35" />
+                <rect x="3" y="17" width="6" height="3" rx="1.5" fill="#1D9E75" opacity="0.4" />
+                <rect x="11" y="17.5" width="10" height="2" rx="1" fill="#1D9E75" opacity="0.2" />
+              </svg>
             </div>
-            <div class="card-sub">練習認識本島與外島</div>
-            <div class="card-cta">開始練習 <span>→</span></div>
-          </div>
-        </a>
-
-        <a href="quiz.html?map=world" class="mode-card">
-          <div class="card-map-preview" id="preview-world"></div>
-          <div class="card-info">
-            <div class="card-title-row">
-              <span class="card-title">世界國家</span>
-              <span class="card-count">50 題</span>
+            <div class="mode-select-info">
+              <div class="mode-select-title-row">
+                <span class="mode-select-title">練習</span>
+                <span class="mode-tag">完整題庫</span>
+              </div>
+              <div class="mode-select-sub">所有題目各出一次</div>
             </div>
-            <div class="card-sub">五大洲的代表國家</div>
-            <div class="card-cta">開始練習 <span>→</span></div>
-          </div>
-        </a>
-      </div>
+            <span class="mode-select-arrow">→</span>
+          </button>
 
-      <div class="home-attribution">taiwan-atlas · Natural Earth</div>
+          <button class="mode-select-card" data-mode="random">
+            <div class="mode-glyph">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
+                <path d="M3 7 L9 7 C12 7 13 10 14 13 C15 16 16 17 19 17" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" fill="none" />
+                <path d="M3 17 L9 17 C12 17 13 14 14 11 C15 8 16 7 19 7" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.55" />
+                <path d="M17 5 L21 7 L17 9" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                <path d="M17 15 L21 17 L17 19" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+              </svg>
+            </div>
+            <div class="mode-select-info">
+              <div class="mode-select-title-row">
+                <span class="mode-select-title">隨機</span>
+                <span class="mode-tag">挑戰計分</span>
+              </div>
+              <div class="mode-select-sub">隨機 20 題，滿分 100</div>
+            </div>
+            <span class="mode-select-arrow">→</span>
+          </button>
+        </div>
+
+        <div class="home-hint">
+          <div class="home-hint-title">怎麼選？</div>
+          <span><strong class="hint-em">練習</strong>會把每個地方都出一次，適合認識；</span><br>
+          <span><strong class="hint-em">隨機</strong>是 20 題小測驗，可以看到分數。</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: 選擇地圖 -->
+    <div id="step-map" class="home-step" style="display:none">
+      <header class="step2-topbar">
+        <button id="back-to-mode" class="back-to-mode">← 重新選擇</button>
+        <span class="step2-mode-badge" id="step2-mode-badge"></span>
+      </header>
+
+      <div class="home-content">
+        <h1 class="home-title step2-title">選擇要練習的地圖</h1>
+        <p class="home-desc" id="step2-desc"></p>
+
+        <div class="step-indicator">
+          <span class="step-num step-num--done">✓</span>
+          <span class="step-label step-label--dim" id="step2-mode-label">1 練習</span>
+          <span class="step-line"></span>
+          <span class="step-num step-num--active">2</span>
+          <span class="step-label step-label--active">選擇地圖</span>
+        </div>
+
+        <div class="mode-cards">
+          <a id="card-taiwan" href="#" class="mode-card">
+            <div class="card-map-preview" id="preview-taiwan"></div>
+            <div class="card-info">
+              <div class="card-title-row">
+                <span class="card-title">台灣縣市</span>
+                <span class="card-count-pill" id="count-taiwan">27 題</span>
+              </div>
+              <div class="card-sub">練習認識本島與外島</div>
+              <div class="card-cta" id="cta-taiwan">開始練習 →</div>
+            </div>
+          </a>
+
+          <a id="card-world" href="#" class="mode-card">
+            <div class="card-map-preview" id="preview-world"></div>
+            <div class="card-info">
+              <div class="card-title-row">
+                <span class="card-title">世界國家</span>
+                <span class="card-count-pill" id="count-world">50 題</span>
+              </div>
+              <div class="card-sub">五大洲的代表國家</div>
+              <div class="card-cta" id="cta-world">開始練習 →</div>
+            </div>
+          </a>
+        </div>
+
+        <div class="home-attribution">taiwan-atlas · Natural Earth</div>
+      </div>
     </div>
   </div>
 
@@ -60,40 +148,103 @@
   <script src="js/data-taiwan.js"></script>
   <script src="js/data-world.js"></script>
   <script>
-    (async function () {
+    (function () {
+      var selectedMode = null;
+      var stepMode = document.getElementById('step-mode');
+      var stepMap = document.getElementById('step-map');
+      var backBtn = document.getElementById('back-to-mode');
+      var step2Badge = document.getElementById('step2-mode-badge');
+      var step2Desc = document.getElementById('step2-desc');
+      var step2ModeLabel = document.getElementById('step2-mode-label');
+
+      var cardTaiwan = document.getElementById('card-taiwan');
+      var cardWorld = document.getElementById('card-world');
+      var countTaiwan = document.getElementById('count-taiwan');
+      var countWorld = document.getElementById('count-world');
+      var ctaTaiwan = document.getElementById('cta-taiwan');
+      var ctaWorld = document.getElementById('cta-world');
+
+      var modeCards = document.querySelectorAll('.mode-select-card');
+      modeCards.forEach(function (card) {
+        card.addEventListener('click', function () {
+          selectedMode = card.dataset.mode;
+          showStep2();
+        });
+      });
+
+      backBtn.addEventListener('click', function () {
+        showStep1();
+      });
+
+      function showStep1() {
+        stepMap.style.display = 'none';
+        stepMode.style.display = '';
+        stepMode.classList.remove('home-step--enter');
+        void stepMode.offsetWidth;
+        stepMode.classList.add('home-step--enter');
+      }
+
+      function showStep2() {
+        var isPractice = selectedMode === 'practice';
+        step2Badge.innerHTML = isPractice
+          ? '<span class="badge-glyph badge-glyph--practice"></span> 練習模式'
+          : '<span class="badge-glyph badge-glyph--random"></span> 隨機模式';
+        step2Desc.textContent = isPractice
+          ? '依模式不同，題數會跟著變。'
+          : '每個地圖隨機抽 20 題，每題 5 分。';
+        step2ModeLabel.textContent = '1 ' + (isPractice ? '練習' : '隨機');
+
+        countTaiwan.textContent = isPractice ? TAIWAN_MAP_CONFIG.totalCount + ' 題' : '20 題';
+        countWorld.textContent = isPractice ? WORLD_MAP_CONFIG.totalCount + ' 題' : '20 題';
+        ctaTaiwan.textContent = isPractice ? '開始練習 →' : '開始挑戰 →';
+        ctaWorld.textContent = isPractice ? '開始練習 →' : '開始挑戰 →';
+
+        cardTaiwan.href = 'quiz.html?map=taiwan&mode=' + selectedMode;
+        cardWorld.href = 'quiz.html?map=world&mode=' + selectedMode;
+
+        stepMode.style.display = 'none';
+        stepMap.style.display = '';
+        stepMap.classList.remove('home-step--enter');
+        void stepMap.offsetWidth;
+        stepMap.classList.add('home-step--enter');
+      }
+
+      // Map previews
       function renderPreview(containerId, features, projType, internalW, internalH) {
-        const container = document.getElementById(containerId);
+        var container = document.getElementById(containerId);
         if (!container) return;
-        const W = 96, H = 96;
-        const proj = (projType === 'naturalEarth' ? d3.geoNaturalEarth1() : d3.geoMercator())
-          .fitExtent([[2, 2], [internalW - 2, internalH - 2]], { type: 'FeatureCollection', features });
-        const pathGen = d3.geoPath(proj);
-        const svg = d3.select(container).append('svg')
+        var W = 96, H = 96;
+        var proj = (projType === 'naturalEarth' ? d3.geoNaturalEarth1() : d3.geoMercator())
+          .fitExtent([[2, 2], [internalW - 2, internalH - 2]], { type: 'FeatureCollection', features: features });
+        var pathGen = d3.geoPath(proj);
+        var svg = d3.select(container).append('svg')
           .attr('width', W).attr('height', H)
           .attr('viewBox', '0 0 ' + internalW + ' ' + internalH)
           .attr('preserveAspectRatio', 'xMidYMid meet');
         svg.selectAll('path').data(features).enter().append('path')
-          .attr('d', d => pathGen(d))
+          .attr('d', function (d) { return pathGen(d); })
           .attr('fill', '#cfe9dc')
           .attr('stroke', '#fff')
           .attr('stroke-width', 0.6)
           .attr('stroke-linejoin', 'round');
       }
 
-      try {
-        const [twTopo, wTopo] = await Promise.all([
-          fetch(TAIWAN_MAP_CONFIG.topoUrl).then(r => r.json()),
-          fetch(WORLD_MAP_CONFIG.topoUrl).then(r => r.json()),
-        ]);
-        const twFeatures = TAIWAN_MAP_CONFIG.processFeatures(twTopo);
-        const wFeatures  = WORLD_MAP_CONFIG.processFeatures(wTopo);
-        renderPreview('preview-taiwan', twFeatures, TAIWAN_MAP_CONFIG.projection,
-          TAIWAN_MAP_CONFIG.previewInternalW, TAIWAN_MAP_CONFIG.previewInternalH);
-        renderPreview('preview-world', wFeatures, WORLD_MAP_CONFIG.projection,
-          WORLD_MAP_CONFIG.previewInternalW, WORLD_MAP_CONFIG.previewInternalH);
-      } catch (e) {
-        // Previews fail silently — cards remain clickable with ocean placeholder
-      }
+      (async function () {
+        try {
+          var results = await Promise.all([
+            fetch(TAIWAN_MAP_CONFIG.topoUrl).then(function (r) { return r.json(); }),
+            fetch(WORLD_MAP_CONFIG.topoUrl).then(function (r) { return r.json(); }),
+          ]);
+          var twFeatures = TAIWAN_MAP_CONFIG.processFeatures(results[0]);
+          var wFeatures = WORLD_MAP_CONFIG.processFeatures(results[1]);
+          renderPreview('preview-taiwan', twFeatures, TAIWAN_MAP_CONFIG.projection,
+            TAIWAN_MAP_CONFIG.previewInternalW, TAIWAN_MAP_CONFIG.previewInternalH);
+          renderPreview('preview-world', wFeatures, WORLD_MAP_CONFIG.projection,
+            WORLD_MAP_CONFIG.previewInternalW, WORLD_MAP_CONFIG.previewInternalH);
+        } catch (e) {
+          // Previews fail silently
+        }
+      })();
     })();
   </script>
 </body>

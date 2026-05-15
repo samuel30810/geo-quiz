@@ -6,16 +6,20 @@
   <title>練習 — 地圖練習工具</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <header class="topbar">
     <button id="back-btn" class="back-btn">← 返回</button>
-    <div id="score-display" class="score-display">答對 <strong>0</strong> / 0</div>
+    <div id="score-display" class="score-display">
+      <span>第</span>
+      <strong>1</strong>
+      <span>/ 0 題</span>
+    </div>
   </header>
 
-  <main class="quiz-main">
+  <main id="quiz-main" class="quiz-main">
     <div class="question-area">
       <div id="question-label" class="question-label">QUESTION 1</div>
       <h1 id="question-text" class="question-text">這是哪個縣市？</h1>
@@ -34,6 +38,80 @@
 
     <button id="next-btn" class="next-btn" style="display:none">下一題 →</button>
   </main>
+
+  <!-- 結束畫面 -->
+  <div id="result-screen" class="result-screen" style="display:none">
+    <div class="topbar topbar--result">
+      <span></span>
+      <div id="result-topbar-score" class="score-display"></div>
+    </div>
+
+    <div class="result-body">
+      <div class="result-chip" id="result-chip"></div>
+      <h1 class="result-headline" id="result-headline"></h1>
+      <p class="result-sub" id="result-sub"></p>
+
+      <!-- 練習模式：圓環 -->
+      <div id="result-ring-area" class="result-ring-area" style="display:none">
+        <div class="result-ring-wrap">
+          <svg class="result-ring-svg" width="200" height="200" viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="86" fill="none" stroke="var(--ocean)" stroke-width="14" />
+            <circle id="result-ring-progress" cx="100" cy="100" r="86" fill="none"
+                    stroke="var(--primary)" stroke-width="14"
+                    stroke-dasharray="0 540.35"
+                    stroke-linecap="round"
+                    transform="rotate(-90 100 100)" />
+          </svg>
+          <div class="result-ring-center">
+            <div class="result-ring-pct"><span id="result-pct-num">0</span><span class="result-ring-pct-sign">%</span></div>
+            <div class="result-ring-detail">答對 <span id="result-ring-correct" class="result-ring-correct-num">0</span> / <span id="result-ring-total">0</span> 題</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 隨機模式：大字分數 + 進度條 -->
+      <div id="result-score-area" class="result-score-area" style="display:none">
+        <div class="result-score-label">YOUR SCORE</div>
+        <div class="result-score-big">
+          <span id="result-score-num" class="result-score-num">0</span><span class="result-score-unit">分</span>
+        </div>
+        <div class="result-score-sub" id="result-score-sub">滿分 100 · 共 20 題</div>
+
+        <div class="result-bar-wrap">
+          <div class="result-bar-track">
+            <div class="result-bar-fill" id="result-bar-fill" style="width:0%"></div>
+          </div>
+          <div class="result-bar-ticks">
+            <span>0</span><span>50</span><span>100</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 細項列 -->
+      <div class="result-breakdown" id="result-breakdown">
+        <div class="result-breakdown-col">
+          <div class="result-breakdown-label">答對</div>
+          <div class="result-breakdown-val result-breakdown-val--good" id="bd-correct">0</div>
+        </div>
+        <div class="result-breakdown-divider"></div>
+        <div class="result-breakdown-col">
+          <div class="result-breakdown-label">答錯</div>
+          <div class="result-breakdown-val result-breakdown-val--bad" id="bd-wrong">0</div>
+        </div>
+        <div class="result-breakdown-divider"></div>
+        <div class="result-breakdown-col">
+          <div class="result-breakdown-label" id="bd-third-label">總題數</div>
+          <div class="result-breakdown-val" id="bd-third-val">0</div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="result-cta">
+        <button id="btn-retry" class="result-btn-primary">再來一次</button>
+        <button id="btn-home" class="result-btn-secondary">返回首頁</button>
+      </div>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>

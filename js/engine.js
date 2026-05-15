@@ -1,42 +1,77 @@
 (async function () {
-  const params = new URLSearchParams(location.search);
-  const mapKind = params.get('map') || 'taiwan';
-  const config = mapKind === 'world' ? WORLD_MAP_CONFIG : TAIWAN_MAP_CONFIG;
+  var params = new URLSearchParams(location.search);
+  var mapKind = params.get('map') || 'taiwan';
+  var mode = params.get('mode');
+  if (mode !== 'practice' && mode !== 'random') mode = 'practice';
+  var config = mapKind === 'world' ? WORLD_MAP_CONFIG : TAIWAN_MAP_CONFIG;
 
-  let features = [];
-  let current = null;
-  let answered = false;
-  let score = 0;
-  let total = 0;
-  let questionNum = 0;
-  let nextQTimer = null;
+  var features = [];
+  var current = null;
+  var answered = false;
+  var score = 0;
+  var total = 0;
+  var questionNum = 0;
+  var nextQTimer = null;
 
-  const mapContainer = document.getElementById('map-container');
-  const svgEl        = document.getElementById('map-svg');
-  const choicesEl    = document.getElementById('choices');
-  const feedbackEl   = document.getElementById('feedback');
-  const nextBtn      = document.getElementById('next-btn');
-  const scoreDisplay = document.getElementById('score-display');
-  const questionLabel = document.getElementById('question-label');
-  const loadingEl    = document.getElementById('map-loading');
-  const mapError     = document.getElementById('map-error');
+  var questionQueue = [];
+  var qIndex = 0;
+  var finished = false;
+
+  var mapContainer = document.getElementById('map-container');
+  var svgEl        = document.getElementById('map-svg');
+  var choicesEl    = document.getElementById('choices');
+  var feedbackEl   = document.getElementById('feedback');
+  var nextBtn      = document.getElementById('next-btn');
+  var scoreDisplay = document.getElementById('score-display');
+  var questionLabel = document.getElementById('question-label');
+  var loadingEl    = document.getElementById('map-loading');
+  var mapError     = document.getElementById('map-error');
+  var quizMain     = document.getElementById('quiz-main');
+
+  var resultScreen = document.getElementById('result-screen');
+  var resultChip   = document.getElementById('result-chip');
+  var resultHeadline = document.getElementById('result-headline');
+  var resultSub    = document.getElementById('result-sub');
+  var resultRingArea = document.getElementById('result-ring-area');
+  var resultScoreArea = document.getElementById('result-score-area');
+  var resultRingProgress = document.getElementById('result-ring-progress');
+  var resultPctNum = document.getElementById('result-pct-num');
+  var resultRingCorrect = document.getElementById('result-ring-correct');
+  var resultRingTotal = document.getElementById('result-ring-total');
+  var resultScoreNum = document.getElementById('result-score-num');
+  var resultScoreSub = document.getElementById('result-score-sub');
+  var resultBarFill = document.getElementById('result-bar-fill');
+  var bdCorrect    = document.getElementById('bd-correct');
+  var bdWrong      = document.getElementById('bd-wrong');
+  var bdThirdLabel = document.getElementById('bd-third-label');
+  var bdThirdVal   = document.getElementById('bd-third-val');
+  var btnRetry     = document.getElementById('btn-retry');
+  var btnHome      = document.getElementById('btn-home');
+  var resultTopbarScore = document.getElementById('result-topbar-score');
 
   document.getElementById('question-text').textContent = config.questionText;
-  document.getElementById('back-btn').addEventListener('click', () => { location.href = 'index.html'; });
-  nextBtn.addEventListener('click', nextQ);
+  document.getElementById('back-btn').addEventListener('click', function () { location.href = 'index.html'; });
+  nextBtn.addEventListener('click', onNextClick);
+  btnRetry.addEventListener('click', retry);
+  btnHome.addEventListener('click', function () { location.href = 'index.html'; });
 
-  document.addEventListener('keydown', e => {
+  document.addEventListener('keydown', function (e) {
+    if (finished) {
+      if (e.key === 'Enter') retry();
+      if (e.key === 'Escape') location.href = 'index.html';
+      return;
+    }
     if (!answered && ['1', '2', '3', '4'].includes(e.key)) {
-      const btns = choicesEl.querySelectorAll('.choice-btn');
-      const btn = btns[+e.key - 1];
+      var btns = choicesEl.querySelectorAll('.choice-btn');
+      var btn = btns[+e.key - 1];
       if (btn) btn.click();
     }
-    if (answered && (e.key === ' ' || e.key === 'Enter')) nextQ();
+    if (answered && (e.key === ' ' || e.key === 'Enter')) onNextClick();
     if (e.key === 'Escape') location.href = 'index.html';
   });
 
   try {
-    const topo = await fetch(config.topoUrl).then(r => {
+    var topo = await fetch(config.topoUrl).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();
     });
@@ -50,21 +85,20 @@
     if (loadingEl) loadingEl.style.display = 'none';
 
     function initMap() {
-      const W = mapContainer.clientWidth;
-      const H = config.mapContainerHeight;
+      var W = mapContainer.clientWidth;
+      var H = config.mapContainerHeight;
       svgEl.setAttribute('width', W);
       svgEl.setAttribute('height', H);
       mapContainer.style.height = H + 'px';
       MapModule.init(svgEl, W, H, config, features);
-      // Re-apply current question state after resize
       if (current) {
         MapModule.resetStyles();
         MapModule.highlight(current);
         if (answered) {
-          const correctName = config.getName(current);
-          const wrongBtn = choicesEl.querySelector('[data-state="wrong"]');
+          var correctName = config.getName(current);
+          var wrongBtn = choicesEl.querySelector('[data-state="wrong"]');
           if (wrongBtn) {
-            const wrongFeat = features.find(f => config.getName(f) === wrongBtn.dataset.name) || null;
+            var wrongFeat = features.find(function (f) { return config.getName(f) === wrongBtn.dataset.name; }) || null;
             if (wrongFeat) MapModule.markWrong(wrongFeat);
           }
           MapModule.markCorrect(current);
@@ -74,12 +108,12 @@
 
     initMap();
 
-    // Re-initialize map on container resize (handles device rotation)
-    const resizeObserver = new ResizeObserver(function () {
+    var resizeObserver = new ResizeObserver(function () {
       initMap();
     });
     resizeObserver.observe(mapContainer);
 
+    buildQueue();
     nextQ();
   } catch (err) {
     showMapError('地圖載入失敗，請檢查網路連線後重新整理');
@@ -91,28 +125,43 @@
       mapError.textContent = msg;
       mapError.style.display = 'flex';
     }
-    choicesEl.querySelectorAll('.choice-btn').forEach(b => { b.disabled = true; });
+    choicesEl.querySelectorAll('.choice-btn').forEach(function (b) { b.disabled = true; });
+  }
+
+  function buildQueue() {
+    questionQueue = shuffle(features.slice());
+    if (mode === 'random') {
+      questionQueue = questionQueue.slice(0, Math.min(20, questionQueue.length));
+    }
+    total = questionQueue.length;
+    qIndex = 0;
   }
 
   function nextQ() {
+    if (qIndex >= total) {
+      showResult();
+      return;
+    }
+
     answered = false;
     questionNum++;
     feedbackEl.className = 'feedback-area';
     feedbackEl.innerHTML = '';
     nextBtn.style.display = 'none';
-    scoreDisplay.innerHTML = '答對 <strong>' + score + '</strong> / ' + total;
-    questionLabel.textContent = 'QUESTION ' + questionNum;
+    updateScoreDisplay();
+
+    var isLast = (qIndex === total - 1);
+    questionLabel.textContent = 'QUESTION ' + questionNum + (isLast ? ' · 最後一題' : '');
 
     MapModule.resetStyles();
     MapModule.resetZoom(400);
 
-    current = features[Math.floor(Math.random() * features.length)];
+    current = questionQueue[qIndex];
+    qIndex++;
 
-    const choices = buildChoices(current);
+    var choices = buildChoices(current);
     renderChoices(choices);
 
-    // Wait for resetZoom (400ms) to complete before starting zoomTo
-    // Clear any pending timer to prevent race conditions on rapid clicks
     clearTimeout(nextQTimer);
     nextQTimer = setTimeout(function () {
       MapModule.zoomTo(current, 600);
@@ -120,19 +169,32 @@
     }, 420);
   }
 
+  function onNextClick() {
+    if (qIndex >= total) {
+      showResult();
+    } else {
+      nextQ();
+    }
+  }
+
+  function updateScoreDisplay() {
+    var currentNum = answered ? questionNum : questionNum;
+    scoreDisplay.innerHTML = '<span>第</span><strong>' + currentNum + '</strong><span>/ ' + total + ' 題</span>';
+  }
+
   function buildChoices(target) {
-    const name = config.getName(target);
-    const others = features.map(f => config.getName(f)).filter(n => n !== name);
+    var name = config.getName(target);
+    var others = features.map(function (f) { return config.getName(f); }).filter(function (n) { return n !== name; });
     shuffle(others);
-    const arr = [name].concat(others.slice(0, 3));
+    var arr = [name].concat(others.slice(0, 3));
     shuffle(arr);
     return arr;
   }
 
   function shuffle(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      const tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
     }
     return arr;
   }
@@ -140,7 +202,7 @@
   function renderChoices(choices) {
     choicesEl.innerHTML = '';
     choices.forEach(function (name) {
-      const btn = document.createElement('button');
+      var btn = document.createElement('button');
       btn.className = 'choice-btn';
       btn.textContent = name;
       btn.dataset.name = name;
@@ -152,17 +214,16 @@
   function onAnswer(chosen) {
     if (answered) return;
     answered = true;
-    total++;
 
-    const correctName = config.getName(current);
-    const isCorrect = chosen === correctName;
+    var correctName = config.getName(current);
+    var isCorrect = chosen === correctName;
 
     if (isCorrect) {
       score++;
       MapModule.markCorrect(current);
       showFeedback('correct', correctName);
     } else {
-      const chosenFeat = features.find(f => config.getName(f) === chosen) || null;
+      var chosenFeat = features.find(function (f) { return config.getName(f) === chosen; }) || null;
       if (chosenFeat) {
         MapModule.zoomToFit([current, chosenFeat]);
         MapModule.markWrong(chosenFeat);
@@ -172,7 +233,7 @@
     }
 
     choicesEl.querySelectorAll('.choice-btn').forEach(function (btn) {
-      const n = btn.dataset.name;
+      var n = btn.dataset.name;
       btn.disabled = true;
       if (n === correctName && isCorrect) btn.dataset.state = 'correct';
       else if (n === chosen && !isCorrect) btn.dataset.state = 'wrong';
@@ -180,26 +241,29 @@
       else btn.dataset.state = 'other';
     });
 
-    scoreDisplay.innerHTML = '答對 <strong>' + score + '</strong> / ' + total;
+    updateScoreDisplay();
+
+    var isLast = (qIndex >= total);
+    nextBtn.textContent = isLast ? '查看結果 →' : '下一題 →';
     nextBtn.style.display = 'block';
   }
 
-  function showFeedback(mode, name) {
-    const isGood = mode === 'correct';
-    feedbackEl.className = 'feedback-area ' + mode;
+  function showFeedback(feedbackMode, name) {
+    var isGood = feedbackMode === 'correct';
+    feedbackEl.className = 'feedback-area ' + feedbackMode;
     feedbackEl.innerHTML = '';
 
-    const iconSpan = document.createElement('span');
+    var iconSpan = document.createElement('span');
     iconSpan.className = 'fb-icon';
     iconSpan.textContent = isGood ? '✓' : '✕';
 
-    const textSpan = document.createElement('span');
+    var textSpan = document.createElement('span');
     textSpan.className = 'fb-text';
 
-    const prefix = document.createTextNode(isGood ? '答對了！這是「' : '正確答案是「');
-    const strong = document.createElement('strong');
+    var prefix = document.createTextNode(isGood ? '答對了！這是「' : '正確答案是「');
+    var strong = document.createElement('strong');
     strong.textContent = name;
-    const suffix = document.createTextNode('」');
+    var suffix = document.createTextNode('」');
 
     textSpan.appendChild(prefix);
     textSpan.appendChild(strong);
@@ -207,5 +271,81 @@
 
     feedbackEl.appendChild(iconSpan);
     feedbackEl.appendChild(textSpan);
+  }
+
+  function showResult() {
+    finished = true;
+    quizMain.style.display = 'none';
+    document.querySelector('.topbar').style.display = 'none';
+    resultScreen.style.display = '';
+
+    var wrong = total - score;
+    var pct = Math.round(score / total * 100);
+    var mapLabel = mapKind === 'taiwan' ? '台灣縣市' : '世界國家';
+
+    resultTopbarScore.innerHTML = '<span>第</span><strong>' + total + '</strong><span>/ ' + total + ' 題</span>';
+
+    bdCorrect.textContent = score;
+    bdWrong.textContent = wrong;
+
+    if (mode === 'practice') {
+      var tone = pct >= 85 ? 'great' : pct >= 60 ? 'good' : 'try';
+      var msgs = {
+        great: { headline: '答得超棒！', sub: '你對這個地圖已經非常熟悉了。' },
+        good:  { headline: '不錯哦！', sub: '繼續練習，你會越來越熟。' },
+        try:   { headline: '再試一次看看', sub: '多看幾次就會記起來的。' },
+      };
+
+      resultChip.innerHTML = '<span class="result-chip-glyph result-chip-glyph--practice"></span>練習結束 · ' + mapLabel;
+      resultHeadline.textContent = msgs[tone].headline;
+      resultSub.textContent = msgs[tone].sub;
+
+      resultRingArea.style.display = '';
+      resultScoreArea.style.display = 'none';
+
+      var circumference = 2 * Math.PI * 86;
+      resultRingProgress.setAttribute('stroke-dasharray', (circumference * pct / 100) + ' ' + circumference);
+      resultPctNum.textContent = pct;
+      resultRingCorrect.textContent = score;
+      resultRingTotal.textContent = total;
+
+      bdThirdLabel.textContent = '總題數';
+      bdThirdVal.textContent = total;
+    } else {
+      var scoreVal = score * 5;
+      var tone = scoreVal >= 85 ? 'great' : scoreVal >= 60 ? 'good' : 'try';
+      var msgs = {
+        great: { headline: '太強了！', sub: '幾乎全對，挑戰大成功。' },
+        good:  { headline: '表現不錯！', sub: '再來幾次能拿更高分。' },
+        try:   { headline: '再挑戰一次', sub: '多練習，分數會慢慢爬上來。' },
+      };
+
+      resultChip.innerHTML = '<span class="result-chip-glyph result-chip-glyph--random"></span>挑戰結束 · ' + mapLabel;
+      resultHeadline.textContent = msgs[tone].headline;
+      resultSub.textContent = msgs[tone].sub;
+
+      resultRingArea.style.display = 'none';
+      resultScoreArea.style.display = '';
+
+      resultScoreNum.textContent = scoreVal;
+      resultScoreSub.textContent = '滿分 100 · 共 ' + total + ' 題';
+      resultBarFill.style.width = scoreVal + '%';
+
+      bdThirdLabel.textContent = '正確率';
+      bdThirdVal.textContent = Math.round(score / total * 100) + '%';
+    }
+  }
+
+  function retry() {
+    finished = false;
+    score = 0;
+    questionNum = 0;
+
+    resultScreen.style.display = 'none';
+    quizMain.style.display = '';
+    document.querySelector('.topbar').style.display = '';
+
+    buildQueue();
+    nextQ();
   }
 })();

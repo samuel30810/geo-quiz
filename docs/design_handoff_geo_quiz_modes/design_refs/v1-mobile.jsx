@@ -284,4 +284,4 @@ function V1MobileHome() {
   );
 }
 
-Object.assign(window, { V1MobileHome, V1MobileQuiz });
+Object.assign(window, { V1MobileHome, V1MobileQuiz, V1MobileMapPanel, V1MobileChoice, V1MobileFeedback });
