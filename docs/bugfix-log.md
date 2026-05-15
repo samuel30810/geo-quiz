@@ -26,3 +26,17 @@
 - `js/map.js`：`init` 改用 `config.backgroundFeatures`（若存在）做 `fitExtent` 以涵蓋全球；先渲染 `.world-bg` 底層（全部國家、`pointer-events: none`），再疊上測驗用的 `.county-path`；zoom handler 同步縮放兩層 stroke-width。
 
 **編譯結果**：✅ 純 JS，無編譯步驟，語法人工確認無誤
+
+## 2026-05-15 — 台灣地圖新增 5 座離島為獨立出題 feature
+
+**觸發情境**：使用者希望台灣地圖增加蘭嶼、綠島、小琉球、龜山島、基隆嶼作為獨立的練習題目。
+
+**根因**：原始 `taiwan-atlas` 的 `counties-10t.json` 以縣市為單位，離島 polygon 包含在母縣市的 MultiPolygon 內，無法獨立出題。
+
+**修改檔案**：
+
+- `js/data-taiwan.js`：新增 `_islands` 設定陣列（每座離島定義 name、id、parentName、lonRange、latRange）；改寫 `processFeatures` 在載入 TopoJSON 後，遍歷母縣市的 MultiPolygon，依 polygon centroid 座標匹配離島 bounding box，拆出為獨立 feature（同一離島多個 polygon 合併為 MultiPolygon）；母縣市幾何移除已拆出的 polygon。`totalCount` 從 22 調整為 27，`maxScale` 從 4 調整為 8，`questionText` 改為「這是哪個縣市／離島？」。
+
+**編譯結果**：✅ 純 JS，無編譯步驟，瀏覽器實測 5 座離島均正常渲染與出題
+
+**文件更新**：更新了 docs/architecture.md（系統概述改為 27 個 feature、台灣資料設定元件描述加入離島拆分邏輯、關鍵決策新增離島拆分方式）
