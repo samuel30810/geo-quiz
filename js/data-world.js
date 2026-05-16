@@ -77,15 +77,15 @@ const COUNTRY_EN_NAMES = {
   '12': 'Algeria', '24': 'Angola', '288': 'Ghana', '384': "Côte d'Ivoire",
   '800': 'Uganda', '788': 'Tunisia',
   // 美洲（現有）
-  '840': 'United States', '124': 'Canada', '484': 'Mexico', '76': 'Brazil',
-  '32': 'Argentina', '152': 'Chile', '170': 'Colombia', '604': 'Peru',
+  '840': 'United States', '124': 'Canada', '484': 'Mexico', '076': 'Brazil',
+  '032': 'Argentina', '152': 'Chile', '170': 'Colombia', '604': 'Peru',
   '862': 'Venezuela',
   // 美洲（新增）
   '218': 'Ecuador', '214': 'Dominican Republic', '320': 'Guatemala',
   '188': 'Costa Rica', '591': 'Panama', '858': 'Uruguay', '222': 'El Salvador',
   '68': 'Bolivia', '600': 'Paraguay', '340': 'Honduras', '388': 'Jamaica',
   // 大洋洲（現有）
-  '36': 'Australia', '554': 'New Zealand',
+  '036': 'Australia', '554': 'New Zealand',
   // 大洋洲（新增）
   '598': 'Papua New Guinea',
 };
