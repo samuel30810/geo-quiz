@@ -9,6 +9,7 @@
   var mapKind = params.get('map') || 'taiwan';
   var mode = params.get('mode');
   if (mode !== 'practice' && mode !== 'random') mode = 'practice';
+  var difficulty = params.get('difficulty') || '';
   var config = mapKind === 'world' ? WORLD_MAP_CONFIG : TAIWAN_MAP_CONFIG;
 
   var features = [];
@@ -136,9 +137,41 @@
   }
 
   function buildQueue() {
-    questionQueue = shuffle(features.slice());
-    if (mode === 'random') {
-      questionQueue = questionQueue.slice(0, Math.min(20, questionQueue.length));
+    var diffConfigs = { easy: [20, 0, 0], medium: [10, 10, 0], hard: [7, 8, 5] };
+
+    if (mode === 'random' && mapKind === 'world' && config.getRank && diffConfigs[difficulty]) {
+      var needs = diffConfigs[difficulty];
+      var tier1 = [], tier2 = [], tier3 = [];
+      features.forEach(function (f) {
+        var r = config.getRank(f);
+        if (r <= 50) tier1.push(f);
+        else if (r <= 100) tier2.push(f);
+        else tier3.push(f);
+      });
+      shuffle(tier1); shuffle(tier2); shuffle(tier3);
+
+      var tiers = [tier1, tier2, tier3];
+      var picked = [[], [], []];
+      var deficit = 0;
+      for (var i = 0; i < 3; i++) {
+        var take = Math.min(needs[i] + deficit, tiers[i].length);
+        picked[i] = tiers[i].slice(0, take);
+        deficit = needs[i] + deficit - take;
+      }
+      if (deficit > 0) {
+        for (var j = 2; j >= 0; j--) {
+          var extra = tiers[j].slice(picked[j].length, picked[j].length + deficit);
+          picked[j] = picked[j].concat(extra);
+          deficit -= extra.length;
+          if (deficit <= 0) break;
+        }
+      }
+      questionQueue = shuffle(picked[0].concat(picked[1]).concat(picked[2]));
+    } else {
+      questionQueue = shuffle(features.slice());
+      if (mode === 'random') {
+        questionQueue = questionQueue.slice(0, Math.min(20, questionQueue.length));
+      }
     }
     total = questionQueue.length;
     qIndex = 0;
@@ -273,6 +306,9 @@
     feedbackEl.className = 'feedback-area ' + feedbackMode;
     feedbackEl.innerHTML = '';
 
+    var mainDiv = document.createElement('div');
+    mainDiv.className = 'fb-main';
+
     var iconSpan = document.createElement('span');
     iconSpan.className = 'fb-icon';
     iconSpan.textContent = isGood ? '✓' : '✕';
@@ -289,8 +325,17 @@
     textSpan.appendChild(strong);
     textSpan.appendChild(suffix);
 
-    feedbackEl.appendChild(iconSpan);
-    feedbackEl.appendChild(textSpan);
+    mainDiv.appendChild(iconSpan);
+    mainDiv.appendChild(textSpan);
+    feedbackEl.appendChild(mainDiv);
+
+    var desc = config.getDesc && config.getDesc(current);
+    if (desc) {
+      var descDiv = document.createElement('div');
+      descDiv.className = 'fb-desc';
+      descDiv.textContent = desc;
+      feedbackEl.appendChild(descDiv);
+    }
   }
 
   function showResult() {
@@ -340,7 +385,9 @@
         try:   { headline: '再挑戰一次', sub: '多練習，分數會慢慢爬上來。' },
       };
 
-      resultChip.innerHTML = '<span class="result-chip-glyph result-chip-glyph--random"></span>挑戰結束 · ' + mapLabel;
+      var diffLabels = { easy: '簡單', medium: '進階', hard: '困難' };
+      var diffSuffix = diffLabels[difficulty] ? ' · ' + diffLabels[difficulty] : '';
+      resultChip.innerHTML = '<span class="result-chip-glyph result-chip-glyph--random"></span>挑戰結束 · ' + mapLabel + diffSuffix;
       resultHeadline.textContent = msgs[tone].headline;
       resultSub.textContent = msgs[tone].sub;
 

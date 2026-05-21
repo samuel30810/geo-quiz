@@ -143,6 +143,29 @@
     </div>
   </div>
 
+  <!-- Difficulty overlay (世界+隨機 only) -->
+  <div id="difficulty-overlay" class="difficulty-overlay" style="display:none">
+    <div class="difficulty-panel">
+      <button id="difficulty-close" class="difficulty-close">✕</button>
+      <h2 class="difficulty-title">選擇難度</h2>
+      <p class="difficulty-desc">依難度不同，題目會從不同排名區間抽取。</p>
+      <div class="difficulty-options">
+        <button class="difficulty-option" data-difficulty="easy">
+          <span class="difficulty-option-name">簡單</span>
+          <span class="difficulty-option-detail">前 50 名國家中抽 20 題</span>
+        </button>
+        <button class="difficulty-option" data-difficulty="medium">
+          <span class="difficulty-option-name">進階</span>
+          <span class="difficulty-option-detail">前 50 名抽 10 題 + 51~100 名抽 10 題</span>
+        </button>
+        <button class="difficulty-option" data-difficulty="hard">
+          <span class="difficulty-option-name">困難</span>
+          <span class="difficulty-option-detail">前 50 名抽 7 題 + 51~100 名抽 8 題 + 101~150 名抽 5 題</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
   <script src="js/data-taiwan.js"></script>
@@ -208,6 +231,31 @@
         void stepMap.offsetWidth;
         stepMap.classList.add('home-step--enter');
       }
+
+      // Difficulty overlay for world + random
+      var diffOverlay = document.getElementById('difficulty-overlay');
+      var diffClose = document.getElementById('difficulty-close');
+
+      cardWorld.addEventListener('click', function (e) {
+        if (selectedMode === 'random') {
+          e.preventDefault();
+          diffOverlay.style.display = '';
+        }
+      });
+
+      diffClose.addEventListener('click', function () {
+        diffOverlay.style.display = 'none';
+      });
+
+      diffOverlay.addEventListener('click', function (e) {
+        if (e.target === diffOverlay) diffOverlay.style.display = 'none';
+      });
+
+      document.querySelectorAll('.difficulty-option').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          location.href = 'quiz.html?map=world&mode=random&difficulty=' + btn.dataset.difficulty;
+        });
+      });
 
       // Map previews
       function renderPreview(containerId, features, projType, internalW, internalH) {
