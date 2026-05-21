@@ -320,22 +320,28 @@ const COUNTRY_DESC = {
   '499': '亞得里亞海戰略深水港所在地，北約成員，爭取加入歐盟的巴爾幹領跑者。',
 };
 
+const WORLD_PATCH = {"type":"FeatureCollection","features":[{"type":"Feature","id":"702","properties":{"cnName":"新加坡","_id":"702"},"geometry":{"type":"Polygon","coordinates":[[[103.97083970839708,1.3321417036045489],[103.81963819638196,1.2661735723607421],[103.65043650436508,1.3251976897894053],[103.70443704437048,1.4241498866551296],[103.81963819638196,1.446717931554332],[103.90963909639095,1.4154698693862002],[103.96003960039599,1.3929018244870122],[103.99603996039963,1.3651257692264522],[103.97083970839708,1.3321417036045489]]]}},{"type":"Feature","id":"480","properties":{"cnName":"模里西斯","_id":"480"},"geometry":{"type":"Polygon","coordinates":[[[57.6527765277653,-20.48421370010574],[57.52317523175233,-20.513725758820073],[57.382773827738276,-20.50330973809737],[57.32877328773287,-20.44949363103005],[57.31797317973181,-20.42692558613085],[57.364773647736484,-20.406093544685433],[57.36117361173612,-20.33838940998784],[57.38637386373864,-20.229021192399415],[57.415174151741525,-20.18388510260101],[57.48717487174872,-20.143957023163964],[57.515975159751605,-20.055420847020955],[57.57717577175774,-19.99639672959229],[57.65637656376563,-19.989452715777148],[57.73557735577356,-20.098820933365573],[57.793177931779326,-20.213397161315356],[57.78237782377823,-20.326237385811353],[57.724777247772494,-20.369637472155958],[57.70677706777067,-20.43560560339978],[57.6527765277653,-20.48421370010574]]]}},{"type":"Feature","id":"470","properties":{"cnName":"馬爾他","_id":"470"},"geometry":{"type":"MultiPolygon","coordinates":[[[[14.567545675456756,35.85257038211009],[14.531545315453172,35.819586316488184],[14.437944379443792,35.82132231994197],[14.351543515435168,35.87166642010172],[14.351543515435168,35.97756263078257],[14.448744487444884,35.956730589337155],[14.538745387453872,35.88555444773199],[14.567545675456756,35.85257038211009]]],[[[14.311943119431191,36.02790673094232],[14.254342543425452,36.01228269985826],[14.19314193141932,36.04179475857261],[14.178741787417891,36.06089079656424],[14.261542615426151,36.076514827648296],[14.304743047430492,36.06262680001802],[14.31914319143192,36.03658674821125],[14.311943119431191,36.02790673094232]]]]}},{"type":"Feature","id":"462","properties":{"cnName":"馬爾地夫","_id":"462"},"geometry":{"type":"MultiPolygon","coordinates":[[[[73.41733417334174,3.2313294820448277],[73.39573395733959,3.229593478591056],[73.38133381333813,3.2469535131289007],[73.3849338493385,3.2712575614818746],[73.40293402934032,3.2886175960197193],[73.42813428134284,3.290353599473505],[73.44253442534426,3.2747295683894464],[73.43533435334353,3.2504255200364582],[73.41733417334174,3.2313294820448277]]],[[[73.5109351093511,4.165299340180908],[73.49653496534967,4.154883319458207],[73.47853478534788,4.158355326365779],[73.47133471334715,4.170507350542266],[73.48213482134821,4.187867385080111],[73.4929349293493,4.210435429979313],[73.5037350373504,4.234739478332301],[73.51813518135182,4.246891502508788],[73.52893528935292,4.243419495601216],[73.52893528935292,4.2295314679709435],[73.52173521735219,4.210435429979313],[73.51813518135182,4.186131381626325],[73.5109351093511,4.165299340180908]]]]}},{"type":"Feature","id":"52","properties":{"cnName":"巴貝多","_id":"52"},"geometry":{"type":"Polygon","coordinates":[[[-59.492394923949234,13.0814130788183],[-59.52119521195212,13.06231704082667],[-59.61119611196112,13.102245120263717],[-59.643596435964355,13.15085321696968],[-59.64719647196472,13.303621520902723],[-59.593195931959315,13.317509548532996],[-59.48879488794887,13.195989306768084],[-59.42759427594275,13.152589220423465],[-59.492394923949234,13.0814130788183]]]}},{"type":"Feature","id":"48","properties":{"cnName":"巴林","_id":"48"},"geometry":{"type":"Polygon","coordinates":[[[50.60750607506077,25.882702547025488],[50.57510575105752,25.806318395058966],[50.54270542705427,25.834094450319526],[50.46710467104671,25.96603071280714],[50.48870488704887,26.05803889585772],[50.452704527045285,26.189975158345348],[50.47070470704708,26.22816723432861],[50.56430564305643,26.24726327232024],[50.585905859058585,26.240319258505096],[50.55710557105573,26.198655175614277],[50.611106111061105,26.12400702710154],[50.61830618306183,26.002486785336615],[50.60750607506077,25.882702547025488]]]}}]};
+
 const WORLD_MAP_CONFIG = {
   topoUrl: 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json',
   processFeatures(topo) {
     const fc = topojson.feature(topo, topo.objects.countries);
     this.backgroundFeatures = fc.features;
-    return fc.features
+    const main = fc.features
       .filter(f => {
         const id = String(f.id);
-        return COUNTRY_NAMES[id] || COUNTRY_NAMES[id.padStart(3, '0')];
+        const stripped = String(parseInt(id, 10));
+        return COUNTRY_NAMES[id] || COUNTRY_NAMES[id.padStart(3, '0')] || COUNTRY_NAMES[stripped];
       })
       .map(f => {
         const id = String(f.id);
-        const key = COUNTRY_NAMES[id] ? id : id.padStart(3, '0');
+        const stripped = String(parseInt(id, 10));
+        const key = COUNTRY_NAMES[id] ? id
+          : COUNTRY_NAMES[id.padStart(3, '0')] ? id.padStart(3, '0')
+          : stripped;
         f.properties = f.properties || {};
         f.properties.cnName = COUNTRY_NAMES[key];
-        f.properties._id = id;
+        f.properties._id = key;
         const keepMulti = new Set(['360', '608', '392', '458', '554', '598', '242', '44', '780']);
         if (f.geometry && f.geometry.type === 'MultiPolygon' && !keepMulti.has(key)) {
           const largest = f.geometry.coordinates.reduce((a, b) =>
@@ -345,20 +351,24 @@ const WORLD_MAP_CONFIG = {
         }
         return f;
       });
+    return main.concat(WORLD_PATCH.features);
   },
   getName(feature) { return feature.properties.cnName; },
   getId(feature)   { return feature.properties._id || String(feature.id); },
   getEnName(feature) {
-    const id = String(feature.id || feature.properties._id || '');
-    return COUNTRY_EN_NAMES[id] || COUNTRY_EN_NAMES[id.padStart(3, '0')] || '';
+    const id = String(feature.properties._id || feature.id || '');
+    const stripped = String(parseInt(id, 10));
+    return COUNTRY_EN_NAMES[id] || COUNTRY_EN_NAMES[id.padStart(3, '0')] || COUNTRY_EN_NAMES[stripped] || '';
   },
   getDesc(feature) {
-    const id = String(feature.id || feature.properties._id || '');
-    return COUNTRY_DESC[id] || COUNTRY_DESC[id.padStart(3, '0')] || '';
+    const id = String(feature.properties._id || feature.id || '');
+    const stripped = String(parseInt(id, 10));
+    return COUNTRY_DESC[id] || COUNTRY_DESC[id.padStart(3, '0')] || COUNTRY_DESC[stripped] || '';
   },
   getRank(feature) {
-    const id = String(feature.id || feature.properties._id || '');
-    return COUNTRY_RANK[id] || COUNTRY_RANK[id.padStart(3, '0')] || 999;
+    const id = String(feature.properties._id || feature.id || '');
+    const stripped = String(parseInt(id, 10));
+    return COUNTRY_RANK[id] || COUNTRY_RANK[id.padStart(3, '0')] || COUNTRY_RANK[stripped] || 999;
   },
   mapKind: 'world',
   questionText: '這是哪個國家？',

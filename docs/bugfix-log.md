@@ -1,5 +1,22 @@
 # Bugfix Log
 
+## 2026-05-21 — 世界地圖練習模式實際出題數與選擇畫面不一致（150 題修復）
+
+**觸發情境**：選擇畫面顯示 150 題，進入練習後實際只出 130 題。
+**根因**：兩個獨立問題疊加：
+1. Natural Earth 110m 的 feature id 是帶前導零的字串（`"004"`），但 `COUNTRY_NAMES` 等字典的 key 為短字串（`"4"`）。`processFeatures` 的 filter 用 `padStart(3,'0')` 做 fallback，對已滿 3 位的 `"004"` 是 no-op，導致阿富汗、比利時、奧地利等 14 個國家被過濾掉。
+2. 新加坡、巴林、馬爾地夫、馬爾他、模里西斯、巴貝多 6 個小島國在 110m 資料集中根本沒有 geometry，無論 ID 如何都無法取得。
+3. `totalCount` 硬寫為 150，與 `processFeatures` 實際回傳數（130）不符，造成選擇畫面顯示錯誤數字。
+
+**修改檔案**：
+
+- `js/data-world.js`：`processFeatures` 的 filter / key lookup 加入第三段 fallback `String(parseInt(id, 10))`，修正前導零 ID 不匹配；`getEnName`、`getDesc`、`getRank` 同步加入相同 fallback 並改為優先讀 `properties._id`；新增 `WORLD_PATCH` 常數（從 50m 資料集擷取的 6 個小島國 GeoJSON，約 4 KB），在 `processFeatures` 末尾 concat 進 features。
+- `index.html`：async preview 區塊在 `processFeatures` 後以 `features.length` 動態覆寫 `totalCount`，使選擇畫面題數與實際一致。
+
+**編譯結果**：✅ 純 JS，無編譯步驟；瀏覽器實測練習模式顯示 150/150，6 個補丁國家中英文名稱與排名均正確
+
+**文件更新**：更新了 docs/architecture.md（世界資料設定元件補充 WORLD_PATCH 與 ID 修正說明；關鍵決策新增「TopoJSON ID 前導零修正」、「110m 小島國 GeoJSON 補丁」、「首頁題數動態更新」三條；更新「小國渲染風險保留」條目）
+
 ## 2026-05-16 — 阿根廷、巴西、澳洲英文名稱在作答時不顯示
 
 **觸發情境**：世界地圖練習中，阿根廷作為正確答案時，選項按鈕只顯示中文「阿根廷」，英文副行消失。

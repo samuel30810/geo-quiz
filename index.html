@@ -285,6 +285,12 @@
           ]);
           var twFeatures = TAIWAN_MAP_CONFIG.processFeatures(results[0]);
           var wFeatures = WORLD_MAP_CONFIG.processFeatures(results[1]);
+          TAIWAN_MAP_CONFIG.totalCount = twFeatures.length;
+          WORLD_MAP_CONFIG.totalCount = wFeatures.length;
+          if (stepMap.style.display !== 'none') {
+            countTaiwan.textContent = selectedMode === 'practice' ? twFeatures.length + ' 題' : '20 題';
+            countWorld.textContent = selectedMode === 'practice' ? wFeatures.length + ' 題' : '20 題';
+          }
           renderPreview('preview-taiwan', twFeatures, TAIWAN_MAP_CONFIG.projection,
             TAIWAN_MAP_CONFIG.previewInternalW, TAIWAN_MAP_CONFIG.previewInternalH);
           renderPreview('preview-world', wFeatures, WORLD_MAP_CONFIG.projection,
