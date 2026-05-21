@@ -10,6 +10,7 @@
   var mode = params.get('mode');
   if (mode !== 'practice' && mode !== 'random') mode = 'practice';
   var difficulty = params.get('difficulty') || '';
+  var tier = params.get('tier') || '';
   var config = mapKind === 'world' ? WORLD_MAP_CONFIG : TAIWAN_MAP_CONFIG;
 
   var features = [];
@@ -139,7 +140,17 @@
   function buildQueue() {
     var diffConfigs = { easy: [20, 0, 0], medium: [10, 10, 0], hard: [7, 8, 5] };
 
-    if (mode === 'random' && mapKind === 'world' && config.getRank && diffConfigs[difficulty]) {
+    if (mode === 'practice' && mapKind === 'world' && config.getRank && tier) {
+      var tierNum = parseInt(tier, 10);
+      var filtered = features.filter(function (f) {
+        var r = config.getRank(f);
+        if (tierNum === 1) return r >= 1 && r <= 50;
+        if (tierNum === 2) return r >= 51 && r <= 100;
+        if (tierNum === 3) return r >= 101 && r <= 150;
+        return true;
+      });
+      questionQueue = shuffle(filtered);
+    } else if (mode === 'random' && mapKind === 'world' && config.getRank && diffConfigs[difficulty]) {
       var needs = diffConfigs[difficulty];
       var tier1 = [], tier2 = [], tier3 = [];
       features.forEach(function (f) {
@@ -361,7 +372,9 @@
         try:   { headline: '再試一次看看', sub: '多看幾次就會記起來的。' },
       };
 
-      resultChip.innerHTML = '<span class="result-chip-glyph result-chip-glyph--practice"></span>練習結束 · ' + mapLabel;
+      var tierLabels = { '1': '前 50 名', '2': '51～100 名', '3': '101～150 名' };
+      var tierSuffix = tierLabels[tier] ? ' · ' + tierLabels[tier] : '';
+      resultChip.innerHTML = '<span class="result-chip-glyph result-chip-glyph--practice"></span>練習結束 · ' + mapLabel + tierSuffix;
       resultHeadline.textContent = msgs[tone].headline;
       resultSub.textContent = msgs[tone].sub;
 

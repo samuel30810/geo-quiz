@@ -1,5 +1,18 @@
 # Bugfix Log
 
+## 2026-05-21 — 世界練習模式新增 tier 區間選擇（前50 / 51~100 / 101~150）
+
+**觸發情境**：使用者希望世界 + 練習模式能分三個排名區間各別練習，而非全 150 題一次練。
+**根因**：非 bug，為新功能。
+**修改檔案**：
+
+- `index.html`：新增 `#tier-overlay`（複用 `.difficulty-overlay` CSS），世界 + 練習點擊時顯示 tier 選擇；JS 加入 `tierOverlay` 控制邏輯，選擇後帶 `tier=1|2|3` 跳轉 quiz.html。
+- `js/engine.js`：讀取 `tier` URL 參數；`buildQueue()` 新增 practice + world + tier 分支，依 tier 過濾 features 後 shuffle 全出；`showResult()` 的 resultChip 加上 tier 標籤（如「前 50 名」）。
+
+**編譯結果**：✅ 純 JS，無編譯步驟
+
+**文件更新**：docs/architecture.md 的關鍵決策表待補（tier 選擇機制）
+
 ## 2026-05-21 — 首頁選擇流程調整：先選地圖再選模式
 
 **觸發情境**：使用者反映先選模式不直覺，希望改為先選地圖（台灣/世界）再選模式（練習/隨機）。

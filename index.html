@@ -143,6 +143,29 @@
     </div>
   </div>
 
+  <!-- Tier overlay (世界+練習 only) -->
+  <div id="tier-overlay" class="difficulty-overlay" style="display:none">
+    <div class="difficulty-panel">
+      <button id="tier-close" class="difficulty-close">✕</button>
+      <h2 class="difficulty-title">選擇練習範圍</h2>
+      <p class="difficulty-desc">選擇要練習的國家排名區間，該區間 50 題各出一次。</p>
+      <div class="difficulty-options">
+        <button class="difficulty-option" data-tier="1">
+          <span class="difficulty-option-name">前 50 名</span>
+          <span class="difficulty-option-detail">最知名的 50 個國家</span>
+        </button>
+        <button class="difficulty-option" data-tier="2">
+          <span class="difficulty-option-name">51～100 名</span>
+          <span class="difficulty-option-detail">中等知名度的 50 個國家</span>
+        </button>
+        <button class="difficulty-option" data-tier="3">
+          <span class="difficulty-option-name">101～150 名</span>
+          <span class="difficulty-option-detail">較冷門的 50 個國家</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Difficulty overlay (世界+隨機 only) -->
   <div id="difficulty-overlay" class="difficulty-overlay" style="display:none">
     <div class="difficulty-panel">
@@ -238,9 +261,25 @@
           var mode = card.dataset.mode;
           if (selectedMap === 'world' && mode === 'random') {
             diffOverlay.style.display = '';
+          } else if (selectedMap === 'world' && mode === 'practice') {
+            tierOverlay.style.display = '';
           } else {
             location.href = 'quiz.html?map=' + selectedMap + '&mode=' + mode;
           }
+        });
+      });
+
+      // Tier overlay controls
+      var tierOverlay = document.getElementById('tier-overlay');
+      document.getElementById('tier-close').addEventListener('click', function () {
+        tierOverlay.style.display = 'none';
+      });
+      tierOverlay.addEventListener('click', function (e) {
+        if (e.target === tierOverlay) tierOverlay.style.display = 'none';
+      });
+      document.querySelectorAll('#tier-overlay .difficulty-option').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          location.href = 'quiz.html?map=world&mode=practice&tier=' + btn.dataset.tier;
         });
       });
 
@@ -253,7 +292,7 @@
         if (e.target === diffOverlay) diffOverlay.style.display = 'none';
       });
 
-      document.querySelectorAll('.difficulty-option').forEach(function (btn) {
+      document.querySelectorAll('#difficulty-overlay .difficulty-option').forEach(function (btn) {
         btn.addEventListener('click', function () {
           location.href = 'quiz.html?map=world&mode=random&difficulty=' + btn.dataset.difficulty;
         });
