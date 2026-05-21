@@ -236,11 +236,15 @@
   function buildChoices(target) {
     var targetCn = config.getName(target);
     var targetEn = config.getEnName(target);
+    var getDesc = config.getDesc ? function (f) {
+      var d = config.getDesc(f);
+      return (d && d.length <= 45) ? d : '';
+    } : function () { return ''; };
     var others = features
       .filter(function (f) { return config.getName(f) !== targetCn; })
-      .map(function (f) { return { cn: config.getName(f), en: config.getEnName(f) }; });
+      .map(function (f) { return { cn: config.getName(f), en: config.getEnName(f), desc: getDesc(f) }; });
     shuffle(others);
-    var arr = [{ cn: targetCn, en: targetEn }].concat(others.slice(0, 3));
+    var arr = [{ cn: targetCn, en: targetEn, desc: getDesc(target) }].concat(others.slice(0, 3));
     shuffle(arr);
     return arr;
   }
@@ -268,6 +272,12 @@
         enSpan.className = 'choice-en';
         enSpan.textContent = pair.en;
         btn.appendChild(enSpan);
+      }
+      if (pair.desc) {
+        var descSpan = document.createElement('span');
+        descSpan.className = 'choice-desc';
+        descSpan.textContent = pair.desc;
+        btn.appendChild(descSpan);
       }
       btn.addEventListener('click', function () { onAnswer(pair.cn); });
       choicesEl.appendChild(btn);
