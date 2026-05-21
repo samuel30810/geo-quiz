@@ -19,7 +19,7 @@
   </nav>
 
   <div class="home-wrapper">
-    <!-- Step 1: 選擇模式 -->
+    <!-- Step 1: 選擇地圖 -->
     <div id="step-mode" class="home-step">
       <header class="home-header">
         <div class="home-score" style="visibility:hidden">
@@ -33,14 +33,63 @@
           地圖練習工具
         </div>
         <h1 class="home-title">看著地圖<br>認識每一個地方</h1>
-        <p class="home-desc">選擇一種練習方式開始。</p>
+        <p class="home-desc">選擇要練習的地圖。</p>
 
         <div class="step-indicator">
           <span class="step-num step-num--active">1</span>
-          <span class="step-label step-label--active">選擇模式</span>
+          <span class="step-label step-label--active">選擇地圖</span>
           <span class="step-line"></span>
           <span class="step-num step-num--dim">2</span>
-          <span class="step-label step-label--dim">選擇地圖</span>
+          <span class="step-label step-label--dim">選擇模式</span>
+        </div>
+
+        <div class="mode-cards">
+          <a id="card-taiwan" href="#" class="mode-card">
+            <div class="card-map-preview" id="preview-taiwan"></div>
+            <div class="card-info">
+              <div class="card-title-row">
+                <span class="card-title">台灣縣市</span>
+                <span class="card-count-pill" id="count-taiwan">27 題</span>
+              </div>
+              <div class="card-sub">練習認識本島與外島</div>
+              <div class="card-cta">選擇地圖 →</div>
+            </div>
+          </a>
+
+          <a id="card-world" href="#" class="mode-card">
+            <div class="card-map-preview" id="preview-world"></div>
+            <div class="card-info">
+              <div class="card-title-row">
+                <span class="card-title">世界國家</span>
+                <span class="card-count-pill" id="count-world">150 題</span>
+              </div>
+              <div class="card-sub">五大洲的代表國家</div>
+              <div class="card-cta">選擇地圖 →</div>
+            </div>
+          </a>
+        </div>
+
+        <div class="home-attribution">taiwan-atlas · Natural Earth</div>
+      </div>
+    </div>
+
+    <!-- Step 2: 選擇模式 -->
+    <div id="step-map" class="home-step" style="display:none">
+      <header class="step2-topbar">
+        <button id="back-to-mode" class="back-to-mode">← 重新選擇</button>
+        <span class="step2-mode-badge" id="step2-mode-badge"></span>
+      </header>
+
+      <div class="home-content">
+        <h1 class="home-title step2-title">選擇練習方式</h1>
+        <p class="home-desc" id="step2-desc">選擇一種練習方式開始。</p>
+
+        <div class="step-indicator">
+          <span class="step-num step-num--done">✓</span>
+          <span class="step-label step-label--dim" id="step2-mode-label">1 台灣縣市</span>
+          <span class="step-line"></span>
+          <span class="step-num step-num--active">2</span>
+          <span class="step-label step-label--active">選擇模式</span>
         </div>
 
         <div class="mode-select-cards">
@@ -60,7 +109,7 @@
                 <span class="mode-select-title">練習</span>
                 <span class="mode-tag">完整題庫</span>
               </div>
-              <div class="mode-select-sub">所有題目各出一次</div>
+              <div class="mode-select-sub" id="step2-practice-sub">所有題目各出一次</div>
             </div>
             <span class="mode-select-arrow">→</span>
           </button>
@@ -90,55 +139,6 @@
           <span><strong class="hint-em">練習</strong>會把每個地方都出一次，適合認識；</span><br>
           <span><strong class="hint-em">隨機</strong>是 20 題小測驗，可以看到分數。</span>
         </div>
-      </div>
-    </div>
-
-    <!-- Step 2: 選擇地圖 -->
-    <div id="step-map" class="home-step" style="display:none">
-      <header class="step2-topbar">
-        <button id="back-to-mode" class="back-to-mode">← 重新選擇</button>
-        <span class="step2-mode-badge" id="step2-mode-badge"></span>
-      </header>
-
-      <div class="home-content">
-        <h1 class="home-title step2-title">選擇要練習的地圖</h1>
-        <p class="home-desc" id="step2-desc"></p>
-
-        <div class="step-indicator">
-          <span class="step-num step-num--done">✓</span>
-          <span class="step-label step-label--dim" id="step2-mode-label">1 練習</span>
-          <span class="step-line"></span>
-          <span class="step-num step-num--active">2</span>
-          <span class="step-label step-label--active">選擇地圖</span>
-        </div>
-
-        <div class="mode-cards">
-          <a id="card-taiwan" href="#" class="mode-card">
-            <div class="card-map-preview" id="preview-taiwan"></div>
-            <div class="card-info">
-              <div class="card-title-row">
-                <span class="card-title">台灣縣市</span>
-                <span class="card-count-pill" id="count-taiwan">27 題</span>
-              </div>
-              <div class="card-sub">練習認識本島與外島</div>
-              <div class="card-cta" id="cta-taiwan">開始練習 →</div>
-            </div>
-          </a>
-
-          <a id="card-world" href="#" class="mode-card">
-            <div class="card-map-preview" id="preview-world"></div>
-            <div class="card-info">
-              <div class="card-title-row">
-                <span class="card-title">世界國家</span>
-                <span class="card-count-pill" id="count-world">50 題</span>
-              </div>
-              <div class="card-sub">五大洲的代表國家</div>
-              <div class="card-cta" id="cta-world">開始練習 →</div>
-            </div>
-          </a>
-        </div>
-
-        <div class="home-attribution">taiwan-atlas · Natural Earth</div>
       </div>
     </div>
   </div>
@@ -172,27 +172,30 @@
   <script src="js/data-world.js"></script>
   <script>
     (function () {
-      var selectedMode = null;
+      var selectedMap = null;
       var stepMode = document.getElementById('step-mode');
       var stepMap = document.getElementById('step-map');
       var backBtn = document.getElementById('back-to-mode');
       var step2Badge = document.getElementById('step2-mode-badge');
-      var step2Desc = document.getElementById('step2-desc');
       var step2ModeLabel = document.getElementById('step2-mode-label');
+      var step2PracticeSub = document.getElementById('step2-practice-sub');
 
       var cardTaiwan = document.getElementById('card-taiwan');
       var cardWorld = document.getElementById('card-world');
       var countTaiwan = document.getElementById('count-taiwan');
       var countWorld = document.getElementById('count-world');
-      var ctaTaiwan = document.getElementById('cta-taiwan');
-      var ctaWorld = document.getElementById('cta-world');
 
-      var modeCards = document.querySelectorAll('.mode-select-card');
-      modeCards.forEach(function (card) {
-        card.addEventListener('click', function () {
-          selectedMode = card.dataset.mode;
-          showStep2();
-        });
+      // Step 1: select map
+      cardTaiwan.addEventListener('click', function (e) {
+        e.preventDefault();
+        selectedMap = 'taiwan';
+        showStep2();
+      });
+
+      cardWorld.addEventListener('click', function (e) {
+        e.preventDefault();
+        selectedMap = 'world';
+        showStep2();
       });
 
       backBtn.addEventListener('click', function () {
@@ -208,22 +211,17 @@
       }
 
       function showStep2() {
-        var isPractice = selectedMode === 'practice';
-        step2Badge.innerHTML = isPractice
-          ? '<span class="badge-glyph badge-glyph--practice"></span> 練習模式'
-          : '<span class="badge-glyph badge-glyph--random"></span> 隨機模式';
-        step2Desc.textContent = isPractice
-          ? '依模式不同，題數會跟著變。'
-          : '每個地圖隨機抽 20 題，每題 5 分。';
-        step2ModeLabel.textContent = '1 ' + (isPractice ? '練習' : '隨機');
+        var isTaiwan = selectedMap === 'taiwan';
+        var mapName = isTaiwan ? '台灣縣市' : '世界國家';
+        step2Badge.innerHTML = isTaiwan
+          ? '<span class="badge-glyph badge-glyph--practice"></span> 台灣縣市'
+          : '<span class="badge-glyph badge-glyph--random"></span> 世界國家';
+        step2ModeLabel.textContent = '1 ' + mapName;
 
-        countTaiwan.textContent = isPractice ? TAIWAN_MAP_CONFIG.totalCount + ' 題' : '20 題';
-        countWorld.textContent = isPractice ? WORLD_MAP_CONFIG.totalCount + ' 題' : '20 題';
-        ctaTaiwan.textContent = isPractice ? '開始練習 →' : '開始挑戰 →';
-        ctaWorld.textContent = isPractice ? '開始練習 →' : '開始挑戰 →';
-
-        cardTaiwan.href = 'quiz.html?map=taiwan&mode=' + selectedMode;
-        cardWorld.href = 'quiz.html?map=world&mode=' + selectedMode;
+        var totalCount = isTaiwan ? TAIWAN_MAP_CONFIG.totalCount : WORLD_MAP_CONFIG.totalCount;
+        step2PracticeSub.textContent = totalCount
+          ? totalCount + ' 題，各出一次'
+          : '所有題目各出一次';
 
         stepMode.style.display = 'none';
         stepMap.style.display = '';
@@ -232,18 +230,22 @@
         stepMap.classList.add('home-step--enter');
       }
 
-      // Difficulty overlay for world + random
+      // Step 2: select mode
       var diffOverlay = document.getElementById('difficulty-overlay');
-      var diffClose = document.getElementById('difficulty-close');
 
-      cardWorld.addEventListener('click', function (e) {
-        if (selectedMode === 'random') {
-          e.preventDefault();
-          diffOverlay.style.display = '';
-        }
+      document.querySelectorAll('.mode-select-card').forEach(function (card) {
+        card.addEventListener('click', function () {
+          var mode = card.dataset.mode;
+          if (selectedMap === 'world' && mode === 'random') {
+            diffOverlay.style.display = '';
+          } else {
+            location.href = 'quiz.html?map=' + selectedMap + '&mode=' + mode;
+          }
+        });
       });
 
-      diffClose.addEventListener('click', function () {
+      // Difficulty overlay controls
+      document.getElementById('difficulty-close').addEventListener('click', function () {
         diffOverlay.style.display = 'none';
       });
 
@@ -287,9 +289,12 @@
           var wFeatures = WORLD_MAP_CONFIG.processFeatures(results[1]);
           TAIWAN_MAP_CONFIG.totalCount = twFeatures.length;
           WORLD_MAP_CONFIG.totalCount = wFeatures.length;
+          countTaiwan.textContent = twFeatures.length + ' 題';
+          countWorld.textContent = wFeatures.length + ' 題';
+          // Update practice sub if step 2 is already visible
           if (stepMap.style.display !== 'none') {
-            countTaiwan.textContent = selectedMode === 'practice' ? twFeatures.length + ' 題' : '20 題';
-            countWorld.textContent = selectedMode === 'practice' ? wFeatures.length + ' 題' : '20 題';
+            var count = selectedMap === 'taiwan' ? twFeatures.length : wFeatures.length;
+            step2PracticeSub.textContent = count + ' 題，各出一次';
           }
           renderPreview('preview-taiwan', twFeatures, TAIWAN_MAP_CONFIG.projection,
             TAIWAN_MAP_CONFIG.previewInternalW, TAIWAN_MAP_CONFIG.previewInternalH);
